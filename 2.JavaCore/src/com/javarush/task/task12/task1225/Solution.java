@@ -16,8 +16,26 @@ public class Solution {
 
     public static String getObjectType(Object o) {
         //напишите тут ваш код
+        if (o.getClass().getSimpleName().equals("Cat")) {
+            return "Кот";
+        }
+        if (o.getClass().getSimpleName().equals("Tiger")){
+            return "Тигр";
+        }
+        if (o.getClass().getSimpleName().equals("Lion")){
+            return "Лев";
+        }
+        if (o.getClass().getSimpleName().equals("Bull")){
+            return "Бык";
+        }
+        if (o.getClass().getSimpleName().equals("Cow")){
+            return "Корова";
+        }
+        if (o.getClass().getSimpleName().equals("Animal")){
+            return "Животное";
+        }
 
-        return "Животное";
+        return "";
     }
 
     public static class Cat extends Animal   //<--Классы наследуются!!
