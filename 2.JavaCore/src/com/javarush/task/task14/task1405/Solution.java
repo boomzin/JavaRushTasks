@@ -15,10 +15,13 @@ public class Solution {
     }
 
     public static void foodMethods(Food food) {
+        food.onSelect();
+        food.onEat();
         //тут добавьте вызов методов для переменной food
     }
 
     public static void selectableMethods(Selectable selectable) {
+        selectable.onSelect();
         //тут добавьте вызов методов для переменной selectable
     }
 
@@ -26,7 +29,12 @@ public class Solution {
         void onSelect();
     }
 
-    static class Food {
+    static class Food implements Selectable{
+        @Override
+        public void onSelect() {
+            System.out.println("The food was selected");
+        }
+
         public void onEat() {
             System.out.println("The food was eaten");
         }
