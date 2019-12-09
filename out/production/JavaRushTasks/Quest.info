@@ -74,14 +74,22 @@
 <body class="dark-content">
 
 <div style="padding: 10px 30px">
-    <h3>Основы Java</h3>
-    <p><strong>Квест «Java Core»</strong> рассчитан на тех, кто уже получил минимальную подготовку по
-        <strong>Java</strong> (в рамках <strong>Квеста «Java Syntax» Java<span
-                class="text-corporate">Rush</span></strong>). Здесь вам предстоит пройти <strong>10 увлекательных
-            уровней</strong>, в которых вы изучите основы <strong>ООП</strong>, познакомитесь с потоками, сериализацией,
-        перегрузкой методов, узнаете много нового об интерфейсах и множественном наследовании. Учёба уже не так проста,
-        как на <strong>Квесте «Java Syntax»</strong>, но регулярная практика — решение задач — поможет вам успешно
-        пройти все его <strong>10 уровней</strong> и быть готовым к разработке мини-проектов в самом ближайшем будущем.
+    <h3>Коллекции Java</h3>
+    <p><strong>Квест «Java Collections»</strong> посвящен детальному изучению <strong>Java-коллекций</strong>, но не
+        только их одних. Речь пойдет о том, как работать с файлами и архивами, что такое паттерны проектирования и как
+        их применять. Вы получите опыт работы с
+        <mark class="blue">JSON</mark>
+        ,
+        <mark class="blue">Guava</mark>
+        ,
+        <mark class="blue">Apache Commons Collections</mark>
+        ,
+        <mark class="blue">Junit</mark>
+        , узнаете подробности о сборке мусора в <strong>Java</strong>. Помимо продвинутых составляющих Core, вы
+        познакомитесь с необходимыми любому современному разработчику инструментами, узнаете о <strong>Git</strong> и
+        <strong>JAXB</strong>, <strong>RMI</strong> и <strong>DynamicProxy</strong>, прикоснетесь к другому важному
+        языку программирования — <strong>JavaScript</strong>. В этом квесте вы создадите мини-проекты — <strong>большие
+            задачи</strong>. В обучающих целях их решение будет разбито на этапы.
     </p>
 </div>
 </body>
