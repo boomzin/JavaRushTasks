@@ -27,6 +27,5 @@ public class Solution {
         fileOutputStream.write(result);
         fileInputStream2.close();
         fileOutputStream.close();
-
     }
 }
