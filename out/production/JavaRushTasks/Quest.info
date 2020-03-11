@@ -72,25 +72,27 @@
     </style>
 </head>
 <body class="dark-content">
-
 <div style="padding: 10px 30px">
-    <h3>Коллекции Java</h3>
-    <p><strong>Квест «Java Collections»</strong> посвящен детальному изучению <strong>Java-коллекций</strong>, но не
-        только их одних. Речь пойдет о том, как работать с файлами и архивами, что такое паттерны проектирования и как
-        их применять. Вы получите опыт работы с
-        <mark class="blue">JSON</mark>
+    <h3>Синтаксис Java</h3>
+    <p><strong>Квест «Java Syntax»</strong> разработан в секретном центре <strong>Java<span
+            class="text-corporate">Rush</span></strong>. Он состоит из <strong>10 уровней</strong>, посвященных основам
+        языка <strong>Java</strong>.
+        Его освоит даже тот, кто никогда не программировал. Вы узнаете, что такое <strong><span class="text-corporate">классы</span></strong>,
+        <mark class="green">объекты</mark>
         ,
-        <mark class="blue">Guava</mark>
-        ,
-        <mark class="blue">Apache Commons Collections</mark>
-        ,
-        <mark class="blue">Junit</mark>
-        , узнаете подробности о сборке мусора в <strong>Java</strong>. Помимо продвинутых составляющих Core, вы
-        познакомитесь с необходимыми любому современному разработчику инструментами, узнаете о <strong>Git</strong> и
-        <strong>JAXB</strong>, <strong>RMI</strong> и <strong>DynamicProxy</strong>, прикоснетесь к другому важному
-        языку программирования — <strong>JavaScript</strong>. В этом квесте вы создадите мини-проекты — <strong>большие
-            задачи</strong>. В обучающих целях их решение будет разбито на этапы.
+        <mark class="orange">методы</mark>
+        и
+        <mark class="blue">переменные</mark>
+        .
+        Изучите основные типы данных, <span class="text-red">массивы</span>, условные <span
+                class="text-red">операторы</span> и <span class="text-red">циклы</span>. Глянете одним глазком на
+        <strong>коллекции</strong> и <strong>основы ООП</strong>
+        (<em>серьезное их изучение начнется в</em> <strong>Квесте 4</strong>), а также начнете работать в <em><strong>IntelliJ
+            IDEA</strong></em> — популярной среде разработки (<em>ею пользуются программисты во всем мире!</em>).
     </p>
+    <p>Но главное, вы решите очень много задач. Задачи занимают в <strong>Java<span
+            class="text-corporate">Rush</span></strong> центральное место. А виртуальные наставники помогут вам
+        справиться с ошибками (<em>проверка решения происходит мгновенно</em>).</p>
 </div>
 </body>
 </html>
