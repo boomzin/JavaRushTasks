@@ -38,6 +38,7 @@ public class Solution {
         String getCountryName();        //For example: Ukraine
     }
 
+
     public static interface Contact {
         String getName();               //For example: Ivanov, Ivan
 
