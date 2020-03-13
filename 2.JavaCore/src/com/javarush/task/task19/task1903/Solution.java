@@ -9,12 +9,50 @@ import java.util.Map;
 
 public class Solution {
     public static Map<String, String> countries = new HashMap<String, String>();
-
-    public static void main(String[] args) {
-
+    static {
+        countries.put("UA", "Ukraine");
+        countries.put("RU", "Russia");
+        countries.put("CA", "Canada");
     }
 
-    public static class IncomeDataAdapter {
+    public static void main(String[] args) {
+//        String phone = String.format("%010d",  1234567890);
+//
+//        System.out.println(String.format("+%d%s", 38, phone.replaceFirst("(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "($1)$2-$3-$4")));
+    }
+
+    public static class IncomeDataAdapter implements Customer, Contact {
+        private IncomeData data;
+        public IncomeDataAdapter(IncomeData incomeData) {
+            this.data = incomeData;
+        }
+
+        @Override
+        public String getCompanyName() {
+            return data.getCompany();
+        }
+
+        @Override
+        public String getCountryName() {
+            return countries.get(data.getCountryCode());
+        }
+
+        @Override
+        public String getName() {
+            return data.getContactLastName() + ", " + data.getContactFirstName();
+        }
+
+        @Override
+        public String getPhoneNumber() {
+//            StringBuilder stringBuilder = new StringBuilder("+" + data.getCountryPhoneCode() + String.format("%010d", data.getPhoneNumber()));
+//            stringBuilder.insert(3, "(");
+//            stringBuilder.insert(7, ")");
+//            stringBuilder.insert(11, "-");
+//            stringBuilder.insert(14, "-");
+            String phone = String.format("%010d", data.getPhoneNumber());
+
+            return String.format("+%d%s", data.getCountryPhoneCode(), phone.replaceFirst("(\\d{3})(\\d{3})(\\d{2})(\\d+)", "($1)$2-$3-$4"));
+        }
     }
 
 
