@@ -15,6 +15,10 @@ public class Person {
         this.birthDate = birthDate;
     }
 
+//    public Date getBirthDate() {
+//        return birthDate;
+//    }
+
     @Override
     public String toString() {
         return String.format("%s %s %s %s", lastName, firstName, middleName, birthDate.toString());
