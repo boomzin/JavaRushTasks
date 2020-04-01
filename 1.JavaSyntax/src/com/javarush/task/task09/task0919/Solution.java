@@ -4,7 +4,7 @@ package com.javarush.task.task09.task0919;
 Деление на ноль
 */
 
-import com.sun.org.apache.bcel.internal.generic.VariableLengthInstruction;
+//import com.sun.org.apache.bcel.internal.generic.VariableLengthInstruction;
 
 public class Solution {
 

@@ -4,7 +4,7 @@ package com.javarush.task.task15.task1517;
 Статики и исключения
 */
 
-import jdk.nashorn.internal.runtime.ECMAException;
+//import jdk.nashorn.internal.runtime.ECMAException;
 
 public class Solution {
     public static int A = 0;
