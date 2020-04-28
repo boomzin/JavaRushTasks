@@ -1,5 +1,6 @@
 package com.javarush.task.task20.task2001;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,7 @@ public class Solution {
     public static void main(String[] args) {
         //исправьте outputStream/inputStream в соответствии с путем к вашему реальному файлу
         try {
-            File your_file_name = File.createTempFile("your_file_name", null);
+            File your_file_name = File.createTempFile("_TemporariIdea", null);
             OutputStream outputStream = new FileOutputStream(your_file_name);
             InputStream inputStream = new FileInputStream(your_file_name);
 
@@ -22,6 +23,7 @@ public class Solution {
             Human somePerson = new Human();
             somePerson.load(inputStream);
             inputStream.close();
+            System.out.println(ivanov.equals(somePerson));
             //check here that ivanov equals to somePerson - проверьте тут, что ivanov и somePerson равны
 
         } catch (IOException e) {
@@ -66,10 +68,33 @@ public class Solution {
         }
 
         public void save(OutputStream outputStream) throws Exception {
+            outputStream.write((this.name + " ").getBytes());
+            if (this.assets != null) {
+                assets.forEach(asset -> {
+                    try {
+                        outputStream.write((asset.getName() + "~" + asset.getPrice() + " ").getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+            outputStream.close();
             //implement this method - реализуйте этот метод
         }
 
         public void load(InputStream inputStream) throws Exception {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String humanLine = bufferedReader.readLine();
+            String[] dataArray = humanLine.trim().split(" ");
+            this.name = dataArray[0];
+            if (dataArray.length > 1) {
+                for (int i = 1; i < dataArray.length; i++) {
+                    String[] tempArray = dataArray[i].split("~");
+                    Asset tempAsset = new Asset(tempArray[0], Double.parseDouble(tempArray[1]));
+                    this.assets.add(tempAsset);
+                }
+            }
+            inputStream.close();
             //implement this method - реализуйте этот метод
         }
     }
