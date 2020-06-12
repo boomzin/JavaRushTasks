@@ -1,0 +1,3 @@
+name=Amigo
+level=31
+extension=txt
