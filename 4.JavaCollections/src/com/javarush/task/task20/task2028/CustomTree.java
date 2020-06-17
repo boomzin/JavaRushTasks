@@ -11,13 +11,83 @@ import java.util.stream.Stream;
 Построй дерево(1)
 */
 public class CustomTree extends AbstractList<String> implements Cloneable, Serializable {
-
+    private List<Entry<String>> tree = new ArrayList<>();
     Entry<String> root;
 
     public CustomTree() {
         this.root = new Entry<>("root");
+        tree.add(root);
     }
 
+    @Override
+    public boolean remove(Object o) {
+
+        if (o instanceof String) {
+            for (int i = 1; i < tree.size(); i++) {
+                if (tree.get(i).elementName.equals(o)) {
+                    if (!(tree.get(i).rightChild == null)) {
+                        remove(tree.get(i).rightChild.elementName);
+                    }
+                    if (!(tree.get(i).leftChild == null)) {
+                        remove(tree.get(i).leftChild.elementName);
+                    }
+                    tree.remove(i);
+                }
+            }
+        } else {
+            throw new UnsupportedOperationException();
+        }
+
+
+        return true;
+    }
+
+    @Override
+    public boolean add(String s) {
+        Entry newParent;
+        Entry newChild = new Entry(s);
+        boolean isAbleToAdd = false;
+        for (int i = 1; i < tree.size(); i++) {
+            if (tree.get(i).isAvailableToAddChildren()) {
+                isAbleToAdd = true;
+            }
+        }
+        if (!isAbleToAdd) {
+            for (int i = tree.size() - 1; i >= tree.size() - ((tree.size() - 1) / 2 + 1) ; i--) {
+                tree.get(i).availableToAddLeftChildren = true;
+                tree.get(i).availableToAddRightChildren = true;
+            }
+        }
+
+
+        for (int i = 0; i < tree.size(); i++) {
+            if ((newParent = tree.get(i)).isAvailableToAddChildren()) {
+                if (newParent.availableToAddLeftChildren & newParent.availableToAddRightChildren) {
+                    newChild.parent = newParent;
+                    newParent.leftChild = newChild;
+                    newParent.availableToAddLeftChildren = false;
+                    tree.add(newChild);
+                    return true;
+                }else if (newParent.availableToAddRightChildren) {
+                    newChild.parent = newParent;
+                    newParent.rightChild = newChild;
+                    newParent.availableToAddRightChildren = false;
+                    tree.add(newChild);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public String getParent(String s) {
+        for (int i = 0; i < tree.size(); i++) {
+            if (tree.get(i).elementName.equals(s)) {
+                return tree.get(i).parent.elementName;
+            }
+        }
+        return null;
+    }
 
     @Override
     public void replaceAll(UnaryOperator<String> operator) {
@@ -51,7 +121,7 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
 
     @Override
     public int size() {
-        return 0;
+        return tree.size() - 1;
     }
 
     @Override
