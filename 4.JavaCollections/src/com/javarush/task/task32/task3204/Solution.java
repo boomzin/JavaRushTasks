@@ -1,35 +1,43 @@
 package com.javarush.task.task32.task3204;
 
+
 import java.io.ByteArrayOutputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 
 /* 
 Генератор паролей
 */
 public class Solution {
-    public static void main(String[] args) throws NoSuchAlgorithmException {
+    public static void main(String[] args) throws IOException {
         ByteArrayOutputStream password = getPassword();
-//        System.out.println(password.toString());
+        System.out.println(password.toString());
     }
 
-    public static ByteArrayOutputStream getPassword() throws NoSuchAlgorithmException {
-        System.out.println(Integer.valueOf(Character.valueOf('a')));
-//        List<Character> list = new ArrayList<>({'A'..'Z'});
-//        char[] chars = new char[]{'A'-'Z'};
-        byte[] bytes = new byte[] {1, 2, 3, 4, 5, 6};
-        MessageDigest messageDigest = MessageDigest.getInstance("md5");
-        byte[] pass = messageDigest.digest(bytes);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (byte b : bytes) {
-            stringBuilder = stringBuilder.append(Character.valueOf(b));
+    public static ByteArrayOutputStream getPassword() throws IOException {
+        while (true) {
+            StringBuilder stringBuilder = new StringBuilder();
+            boolean upperCase = false;
+            boolean lowCase = false;
+            boolean digit = false;
+            char symbol;
+            for (int i = 0; i < 8; i++) {
+                symbol = (char) (Math.random() * 127);
+                if (Character.isUpperCase(symbol)) {
+                    upperCase = true;
+                    stringBuilder.append(symbol);
+                } else if (Character.isLowerCase(symbol)) {
+                    lowCase = true;
+                    stringBuilder.append(symbol);
+                } else if (Character.isDigit(symbol)) {
+                    digit = true;
+                    stringBuilder.append(symbol);
+                }
+            }
+            if (upperCase && lowCase && digit && stringBuilder.length() == 8) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                baos.write(stringBuilder.toString().getBytes());
+                return baos;
+            }
         }
-        stringBuilder.append("a");
-        System.out.println(Arrays.toString(pass));
-        System.out.println(stringBuilder.toString());
-        return null;
     }
 }
