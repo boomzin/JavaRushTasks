@@ -1,9 +1,6 @@
-package com.javarush.task.task33.task3308;
+package com.javarush.task.task33.task3309;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +9,16 @@ import java.util.List;
 public class Shop {
 
 //    @XmlElementWrapper(name = "goods", nillable = true)
+
     @XmlElement()
     public Goods goods;
 
     @XmlElement()
     public int count;
+
+    @XmlAttribute(name="data")
+    private final static String DATA = "whatever";
+
 
     @XmlElement()
     public double profit;

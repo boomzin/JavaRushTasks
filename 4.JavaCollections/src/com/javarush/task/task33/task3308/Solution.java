@@ -2,8 +2,10 @@ package com.javarush.task.task33.task3308;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 /* 
 Создание класса по строке xml
@@ -34,6 +36,19 @@ public class Solution {
         Object o = unmarshaller.unmarshal(reader);
 
         System.out.println(o.toString());
+
+
+        StringWriter writer = new StringWriter();
+        JAXBContext contextM = JAXBContext.newInstance(Shop.class);
+        Marshaller marshaller = contextM.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        // сама сериализация
+        marshaller.marshal(o, writer);
+
+        //преобразовываем в строку все записанное в StringWriter
+        String result = writer.toString();
+        System.out.println(result);
+
     }
 
     public static Class getClassName() {
