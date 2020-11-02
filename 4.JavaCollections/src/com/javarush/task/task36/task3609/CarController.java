@@ -8,6 +8,23 @@ public class CarController {
         this.model = model;
         this.view = view;
     }
+    public void increaseSpeed(int seconds) {
+        if (model.getSpeed() < model.getMaxSpeed()) {
+            model.setSpeed(model.getSpeed() + (int) (3.5 * seconds));
+        }
+        if (model.getSpeed() > model.getMaxSpeed()) {
+            model.setSpeed(model.getMaxSpeed());
+        }
+    }
+
+    public void decreaseSpeed(int seconds) {
+        if (model.getSpeed() > 0) {
+            model.setSpeed(model.getSpeed()- (12 * seconds));
+        }
+        if (model.getSpeed() < 0) {
+            model.setSpeed(0);
+        }
+    }
 
     public String getCarBrand() {
         return model.getBrand();
