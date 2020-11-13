@@ -1,7 +1,6 @@
 package com.javarush.task.task33.task3310;
 
-import com.javarush.task.task33.task3310.strategy.HashMapStorageStrategy;
-import com.javarush.task.task33.task3310.strategy.StorageStrategy;
+import com.javarush.task.task33.task3310.strategy.*;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -36,9 +35,8 @@ public class Solution {
         Date finish = new Date();
         Long duration = finish.getTime() - start.getTime();
         Helper.printMessage(duration.toString());
-        Set<String> strategyStringSet = new HashSet<>();
         start = new Date();
-        strategyStringSet = getStrings(shortener, strategyIdSet);
+        Set<String> strategyStringSet = getStrings(shortener, strategyIdSet);
         finish = new Date();
         duration = finish.getTime() - start.getTime();
         Helper.printMessage(duration.toString());
@@ -53,9 +51,12 @@ public class Solution {
 
     public static void main(String[] args) {
         testStrategy(new HashMapStorageStrategy(), 10000);
+        testStrategy(new OurHashMapStorageStrategy(), 10000);
+        testStrategy(new OurHashBiMapStorageStrategy(), 10000);
+        testStrategy(new HashBiMapStorageStrategy(), 10000);
+        testStrategy(new DualHashBidiMapStorageStrategy(), 10000);
+        testStrategy(new FileStorageStrategy(), 100);
 
 
-
-//        System.out.println(Integer.toString(36, 36));
     }
 }
