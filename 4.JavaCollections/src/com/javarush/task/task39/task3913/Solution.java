@@ -36,6 +36,9 @@ public class Solution {
         System.out.println(logParser.getFailedEvents(null, null));
         System.out.println(logParser.getErrorEvents(null, null));
         System.out.println(logParser.getNumberOfAttemptToSolveTask(18, null, null));
+        System.out.println(logParser.getNumberOfSuccessfulAttemptToSolveTask(18, null, null));
+        System.out.println(logParser.getAllSolvedTasksAndTheirNumber(null, null));
+        System.out.println(logParser.getAllDoneTasksAndTheirNumber(null, null));
 
 
     }

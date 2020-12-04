@@ -1,9 +1,7 @@
 package com.javarush.task.task39.task3913;
 
-import com.javarush.task.task39.task3913.query.DateQuery;
-import com.javarush.task.task39.task3913.query.EventQuery;
-import com.javarush.task.task39.task3913.query.IPQuery;
-import com.javarush.task.task39.task3913.query.UserQuery;
+import com.javarush.task.task39.task3913.query.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
+public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQuery {
     public enum KeyType {IP, USER, DATE, EVENT, STATUS, OTHER}
     private final List<String> logLines = new ArrayList<>();
 
@@ -47,6 +45,14 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
         return eventSet;
     }
 
+    private Set<Status> convertStringSetToStatusSet(Set<String> stringSet) {
+        Set<Status> statusSet = new HashSet<>();
+        for (String s : stringSet) {
+            statusSet.add(Status.valueOf(s));
+        }
+        return statusSet;
+    }
+
     private Set<Date> convertStringSetToDateSet(Set<String> stringSet) {
         Set<Date> dateResults = new HashSet<>();
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
@@ -60,9 +66,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
         return dateResults;
     }
 
-    private Set<String> selectResultByKeys(Date after, Date before, String key1, KeyType keyType1, String key2, KeyType keyType2, KeyType result) {
-        Set<String> selectedResults;
-        Stream<String> stringStream = logLines.stream();
+    private boolean dateBetween(String date, Date after, Date before) {
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
         if (after == null && before == null) {
             after = new Date(0L);
@@ -77,6 +81,18 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
             before = new Date();
             before.setTime(Long.MAX_VALUE);
         }
+        try {
+            return format.parse(date.split("\t")[2]).getTime() <= before.getTime() &&
+                    format.parse(date.split("\t")[2]).getTime() >= after.getTime();
+        } catch (ParseException e) {
+            System.out.println("Date format parsing error in dateBetween method");
+        }
+        return false;
+    }
+
+    private Set<String> selectResultByKeys(Date after, Date before, String key1, KeyType keyType1, String key2, KeyType keyType2, KeyType result) {
+        Set<String> selectedResults;
+        Stream<String> stringStream = logLines.stream();
         Stream<String> stringStreamOnKey1;
         switch (keyType1) {
             case USER:
@@ -100,7 +116,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
                 stringStreamOnKey2 = stringStreamOnKey1.filter(x -> (x.split("\t")[1]).equals(key2));
                 break;
             case EVENT:
-                stringStreamOnKey2 = stringStreamOnKey1.filter(x -> (x.split("\t")[3]).contains(key2));
+                stringStreamOnKey2 = stringStreamOnKey1.filter(x -> (x.split("\t")[3]).equals(key2));
                 break;
             case STATUS:
                 stringStreamOnKey2 = stringStreamOnKey1.filter(x -> (x.split("\t")[4]).contains(key2));
@@ -111,18 +127,8 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
             default:
                 stringStreamOnKey2 = stringStreamOnKey1;
         }
-        Date finalBefore = before;
-        Date finalAfter = after;
         selectedResults = stringStreamOnKey2
-                .filter(x -> {
-                    try {
-                        return format.parse(x.split("\t")[2]).getTime() <= finalBefore.getTime() &&
-                                format.parse(x.split("\t")[2]).getTime() >= finalAfter.getTime();
-                    } catch (ParseException e) {
-                        System.out.println("Date format parsing error in selectResultByKeys method");
-                        return false;
-                    }
-                })
+                .filter(x -> dateBetween(x, after, before))
                 .map(x -> x.split("\t")[result.ordinal()])
                 .collect(Collectors.toSet());
 
@@ -294,21 +300,55 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
 
     @Override
     public int getNumberOfAttemptToSolveTask(int task, Date after, Date before) {
-        return selectResultByKeys(after, before, "SOLVE_TASK " + task, KeyType.EVENT, "", KeyType.OTHER, KeyType.DATE).size();
+        long count = logLines.stream()
+                .filter(x -> dateBetween(x, after, before))
+                .filter(x -> x.split("\t")[3].equals("SOLVE_TASK " + task))
+                .count();
+        return (int) count;
     }
 
     @Override
     public int getNumberOfSuccessfulAttemptToSolveTask(int task, Date after, Date before) {
-        return 0;
+        long count = logLines.stream()
+                .filter(x -> dateBetween(x, after, before))
+                .filter(x -> x.split("\t")[3].equals("DONE_TASK " + task))
+                .count();
+        return (int) count;
     }
 
     @Override
     public Map<Integer, Integer> getAllSolvedTasksAndTheirNumber(Date after, Date before) {
-        return null;
+        Map<Integer, Integer> result = new HashMap<>();
+        Set<String> solvedTasks = selectResultByKeys(after, before, "SOLVE_TASK ", KeyType.EVENT, "", KeyType.OTHER, KeyType.EVENT);
+        for (String solvedTask : solvedTasks) {
+            int taskNumber = Integer.parseInt(solvedTask.substring(solvedTask.lastIndexOf(" ") + 1));
+            int taskCount = getNumberOfAttemptToSolveTask(taskNumber, after, before);
+            result.put(taskNumber, taskCount);
+        }
+        return result;
     }
 
     @Override
     public Map<Integer, Integer> getAllDoneTasksAndTheirNumber(Date after, Date before) {
+        Map<Integer, Integer> result = new HashMap<>();
+        Set<String> solvedTasks = selectResultByKeys(after, before, "DONE_TASK ", KeyType.EVENT, "", KeyType.OTHER, KeyType.EVENT);
+        for (String solvedTask : solvedTasks) {
+            int taskNumber = Integer.parseInt(solvedTask.substring(solvedTask.lastIndexOf(" ") + 1));
+            int taskCount = getNumberOfSuccessfulAttemptToSolveTask(taskNumber, after, before);
+            result.put(taskNumber, taskCount);
+        }
+        return result;
+    }
+
+    @Override
+    public Set<Object> execute(String query) {
+        switch (query) {
+            case "get ip" : return new HashSet<>(getUniqueIPs(null, null));
+            case "get user" : return new HashSet<>(getAllUsers());
+            case "get date" : return new HashSet<>(convertStringSetToDateSet(selectResultByKeys(null, null, "", KeyType.OTHER, "", KeyType.OTHER,KeyType.DATE)));
+            case "get event" : return new HashSet<>(getAllEvents(null, null));
+            case "get status" : return new HashSet<>(convertStringSetToStatusSet(selectResultByKeys(null, null, "", KeyType.OTHER, "", KeyType.OTHER,KeyType.STATUS)));
+        }
         return null;
     }
 }
