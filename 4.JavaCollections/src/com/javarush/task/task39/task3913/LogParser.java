@@ -107,6 +107,9 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
             case IP:
                 stringStreamOnKey1 = stringStream.filter(x -> (x.split("\t")[0]).contains(key1));
                 break;
+            case DATE:
+                stringStreamOnKey1 = stringStream.filter(x -> (x.split("\t")[2]).contains(key1));
+                break;
             default:
                 stringStreamOnKey1 = stringStream;
         }
@@ -349,6 +352,20 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
             case "get event" : return new HashSet<>(getAllEvents(null, null));
             case "get status" : return new HashSet<>(convertStringSetToStatusSet(selectResultByKeys(null, null, "", KeyType.OTHER, "", KeyType.OTHER,KeyType.STATUS)));
         }
-        return null;
+        String keyValue = query.substring(query.lastIndexOf("= ") + 3);
+        String key = query.substring(query.lastIndexOf("for ") + 4, query.lastIndexOf(" = ")).toUpperCase();
+        String result = query.substring(4, query.lastIndexOf(" for")).toUpperCase();
+        KeyType keyTypeKey = KeyType.valueOf(key);
+        KeyType keyTypeResult = KeyType.valueOf(result);
+        Set<String> stringSet = selectResultByKeys(null, null, keyValue, keyTypeKey, "", KeyType.OTHER, keyTypeResult);
+        switch (keyTypeResult) {
+            case DATE:
+                return new HashSet<>(convertStringSetToDateSet(stringSet));
+            case EVENT:
+                return new HashSet<>(convertStringSetToEventSet(stringSet));
+            case STATUS:
+                return new HashSet<>(convertStringSetToStatusSet(stringSet));
+        }
+        return new HashSet<>(stringSet);
     }
 }

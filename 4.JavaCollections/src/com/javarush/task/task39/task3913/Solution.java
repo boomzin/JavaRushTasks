@@ -39,6 +39,9 @@ public class Solution {
         System.out.println(logParser.getNumberOfSuccessfulAttemptToSolveTask(18, null, null));
         System.out.println(logParser.getAllSolvedTasksAndTheirNumber(null, null));
         System.out.println(logParser.getAllDoneTasksAndTheirNumber(null, null));
+        System.out.println(logParser.execute("get ip for user = \"Diego"));
+        System.out.println(logParser.execute("get ip for date = \"30.08.2012 16:08:13"));
+
 
 
     }
