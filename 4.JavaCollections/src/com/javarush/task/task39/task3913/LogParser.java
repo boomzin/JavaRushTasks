@@ -11,6 +11,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,6 +34,17 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                 }
             }
         }
+    }
+
+    private Date convertStringToDate(String s) {
+        DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
+        Date foundDate = null;
+        try {
+            foundDate = format.parse(s);
+        } catch (ParseException e) {
+            System.out.println("convertStringToDate method: Date parse error");
+        }
+        return foundDate;
     }
 
     private Set<Event> convertStringSetToEventSet(Set<String> stringSet) {
@@ -82,8 +95,8 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
             before.setTime(Long.MAX_VALUE);
         }
         try {
-            return format.parse(date.split("\t")[2]).getTime() <= before.getTime() &&
-                    format.parse(date.split("\t")[2]).getTime() >= after.getTime();
+            return format.parse(date.split("\t")[2]).getTime() < before.getTime() &&
+                    format.parse(date.split("\t")[2]).getTime() > after.getTime();
         } catch (ParseException e) {
             System.out.println("Date format parsing error in dateBetween method");
         }
@@ -108,7 +121,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                 stringStreamOnKey1 = stringStream.filter(x -> (x.split("\t")[0]).contains(key1));
                 break;
             case DATE:
-                stringStreamOnKey1 = stringStream.filter(x -> (x.split("\t")[2]).contains(key1));
+                stringStreamOnKey1 = stringStream.filter(x -> (x.split("\t")[2]).equals(key1));
                 break;
             default:
                 stringStreamOnKey1 = stringStream;
@@ -345,27 +358,55 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
 
     @Override
     public Set<Object> execute(String query) {
-        switch (query) {
-            case "get ip" : return new HashSet<>(getUniqueIPs(null, null));
-            case "get user" : return new HashSet<>(getAllUsers());
-            case "get date" : return new HashSet<>(convertStringSetToDateSet(selectResultByKeys(null, null, "", KeyType.OTHER, "", KeyType.OTHER,KeyType.DATE)));
-            case "get event" : return new HashSet<>(getAllEvents(null, null));
-            case "get status" : return new HashSet<>(convertStringSetToStatusSet(selectResultByKeys(null, null, "", KeyType.OTHER, "", KeyType.OTHER,KeyType.STATUS)));
+        String result = "OTHER";
+        Pattern resultPattern = Pattern.compile("(?<=get )([\\w])*");
+        Matcher resultMatcher = resultPattern.matcher(query);
+        if (resultMatcher.find()) {
+            result = resultMatcher.group().toUpperCase();
         }
-        String keyValue = query.substring(query.lastIndexOf("= ") + 3);
-        String key = query.substring(query.lastIndexOf("for ") + 4, query.lastIndexOf(" = ")).toUpperCase();
-        String result = query.substring(4, query.lastIndexOf(" for")).toUpperCase();
-        KeyType keyTypeKey = KeyType.valueOf(key);
         KeyType keyTypeResult = KeyType.valueOf(result);
-        Set<String> stringSet = selectResultByKeys(null, null, keyValue, keyTypeKey, "", KeyType.OTHER, keyTypeResult);
+
+        String key = "OTHER";
+        Pattern keyPattern = Pattern.compile("(?<=for\\s)([\\w]*(?=\\s=))");
+        Matcher keyMatcher = keyPattern.matcher(query);
+        if (keyMatcher.find()) {
+            key = keyMatcher.group().toUpperCase();
+        }
+        KeyType keyTypeKey = KeyType.valueOf(key);
+
+        String keyValue = "";
+        Pattern valuePattern = Pattern.compile("(?<== \")([\\w.?\\s?:?]*)");
+        Matcher valueMatcher = valuePattern.matcher(query);
+        if (valueMatcher.find()) {
+            keyValue = valueMatcher.group();
+        }
+
+        Date after = null;
+        Date before = null;
+        if (query.contains(" and date between ")) {
+            Pattern datePattern = Pattern.compile("(?<=between \")(\\d+.\\d+.\\d+\\s\\d+:\\d+:\\d+)");
+            Matcher dateMatcher = datePattern.matcher(query);
+            if (dateMatcher.find()) {
+                after = convertStringToDate(dateMatcher.group());
+            }
+            datePattern = Pattern.compile("(?<=and \")(\\d+.\\d+.\\d+\\s\\d+:\\d+:\\d+)");
+            dateMatcher = datePattern.matcher(query);
+            if (dateMatcher.find()) {
+                before = convertStringToDate(dateMatcher.group());
+            }
+        }
+        Set<String> stringSet = selectResultByKeys(after, before, keyValue, keyTypeKey, "", KeyType.OTHER, keyTypeResult);
         switch (keyTypeResult) {
+            case IP:
+            case USER:
+                return new HashSet<>(stringSet);
             case DATE:
                 return new HashSet<>(convertStringSetToDateSet(stringSet));
-            case EVENT:
-                return new HashSet<>(convertStringSetToEventSet(stringSet));
             case STATUS:
                 return new HashSet<>(convertStringSetToStatusSet(stringSet));
+            case EVENT:
+                return new HashSet<>(convertStringSetToEventSet(stringSet));
         }
-        return new HashSet<>(stringSet);
+        return null;
     }
 }
