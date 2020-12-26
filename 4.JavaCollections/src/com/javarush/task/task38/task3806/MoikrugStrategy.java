@@ -1,5 +1,6 @@
-package com.javarush.task.task28.task2810.model;
+package com.javarush.task.task38.task3806;
 
+import com.javarush.task.task28.task2810.model.Strategy;
 import com.javarush.task.task28.task2810.vo.Vacancy;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
