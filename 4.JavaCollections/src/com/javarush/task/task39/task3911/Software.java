@@ -26,10 +26,13 @@ public class Software {
         if (!versionHistoryMap.containsKey(rollbackVersion)) {
             return false;
         }
-        for (Integer integer : versionHistoryMap.keySet()) {
-            if (integer > rollbackVersion) {
-                versionHistoryMap.remove(integer);
+        Iterator<Map.Entry<Integer, String>> iterator = versionHistoryMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, String> entry = iterator.next();
+            if (rollbackVersion >= entry.getKey()) {
+                continue;
             }
+            iterator.remove();
         }
         currentVersion = rollbackVersion;
         return true;
