@@ -3,6 +3,8 @@ package com.javarush.task.task26.task2613;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConsoleHelper {
     private static BufferedReader bis = new BufferedReader(new InputStreamReader(System.in));
@@ -36,22 +38,16 @@ public class ConsoleHelper {
     public static String[] getValidTwoDigits(String currencyCode) {
         int denomination = 0;
         int count = 0;
-        String[] validTwoDigits = new String[2];
         while (true) {
             System.out.print("Enter denomination and count: ");
-            try {
-                validTwoDigits = readString().split(" ");
-                denomination = Integer.valueOf(validTwoDigits[0]);
-                count = Integer.valueOf(validTwoDigits[1]);
-                if (denomination > 0 && count > 0) {
-                    break;
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Entered denomination or count is invalid");
+            String twoDigits = readString();
+            Pattern pattern = Pattern.compile("(\\A\\d+ +\\d+\\Z)");
+            Matcher matcher = pattern.matcher(twoDigits);
+            if (matcher.find()) {
+                return twoDigits.split(" ");
             }
-
+            System.out.println("Entered denomination or count is invalid");
         }
-        return validTwoDigits;
     }
 
 }
