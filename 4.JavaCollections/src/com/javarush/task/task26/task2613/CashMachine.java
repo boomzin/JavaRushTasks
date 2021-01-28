@@ -10,6 +10,8 @@ public class CashMachine {
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
 
+//        CurrencyManipulator currencyManipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode("rub");
+//        System.out.println(currencyManipulator.withdrawAmount(153).toString());
         while (true) {
             try {
                 CommandExecutor.execute(ConsoleHelper.askOperation());

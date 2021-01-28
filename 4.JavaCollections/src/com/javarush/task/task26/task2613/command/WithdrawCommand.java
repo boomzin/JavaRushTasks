@@ -4,6 +4,11 @@ import com.javarush.task.task26.task2613.ConsoleHelper;
 import com.javarush.task.task26.task2613.CurrencyManipulator;
 import com.javarush.task.task26.task2613.CurrencyManipulatorFactory;
 import com.javarush.task.task26.task2613.exception.InterruptOperationException;
+import com.javarush.task.task26.task2613.exception.NotEnoughMoneyException;
+import sun.net.sdp.SdpSupport;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 class WithdrawCommand implements Command {
     @Override
@@ -18,8 +23,8 @@ class WithdrawCommand implements Command {
                 break;
             }
         }
-
-        while (true) {
+        boolean exit = false;
+        while (exit) {
             while (true) {
                 ConsoleHelper.writeMessage("Enter amount: ");
                 try {
@@ -30,7 +35,16 @@ class WithdrawCommand implements Command {
                 }
             }
             if (currencyManipulator.isAmountAvailable(amount)) {
-                currencyManipulator.withdrawAmount(amount);
+                try {
+                    TreeMap<Integer, Integer> withdraw = (TreeMap<Integer, Integer>) currencyManipulator.withdrawAmount(amount);
+                    for (Map.Entry<Integer, Integer> entry : withdraw.entrySet()) {
+                        ConsoleHelper.writeMessage("\t" + entry.getKey() + " - " + entry.getValue() + System.lineSeparator());
+                    }
+                    exit = true;
+                    break;
+                } catch (NotEnoughMoneyException e) {
+                    ConsoleHelper.writeMessage("Try another amount" + System.lineSeparator());
+                }
             }
         }
     }
