@@ -1,5 +1,7 @@
 package com.javarush.task.task26.task2613;
 
+import com.javarush.task.task26.task2613.exception.InterruptOperationException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,19 +12,21 @@ public class ConsoleHelper {
     private static BufferedReader bis = new BufferedReader(new InputStreamReader(System.in));
 
     public static void writeMessage(String message) {
-        System.out.println(message);
+        System.out.print(message);
     }
 
-    public static String readString() {
+    public static String readString() throws InterruptOperationException {
         String result = null;
         try {
             result = bis.readLine();
         } catch (IOException e) {
-//            e.printStackTrace();
+        }
+        if ("exit".equals(result.toLowerCase())) {
+            throw new InterruptOperationException();
         }
         return result;
     }
-    public static String askCurrencyCode() {
+    public static String askCurrencyCode() throws InterruptOperationException {
         String currencyCode = null;
         while (true) {
             System.out.print("Enter currency code: ");
@@ -35,7 +39,7 @@ public class ConsoleHelper {
         return currencyCode.toUpperCase();
     }
 
-    public static String[] getValidTwoDigits(String currencyCode) {
+    public static String[] getValidTwoDigits(String currencyCode) throws InterruptOperationException {
         int denomination = 0;
         int count = 0;
         while (true) {
@@ -47,6 +51,18 @@ public class ConsoleHelper {
                 return twoDigits.split(" ");
             }
             System.out.println("Entered denomination or count is invalid");
+        }
+    }
+
+    public static Operation askOperation() throws InterruptOperationException{
+        while (true) {
+            try {
+                System.out.println("Available operations: 1.INFO 2.DEPOSIT 3.WITHDRAW 4.EXIT");
+                System.out.print("Enter operation code: ");
+                return Operation.getAllowableOperationByOrdinal(Integer.valueOf(readString()));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Entered operation code is invalid");
+            }
         }
     }
 
