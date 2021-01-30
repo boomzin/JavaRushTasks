@@ -57,7 +57,7 @@ public class ConsoleHelper {
     public static Operation askOperation() throws InterruptOperationException{
         while (true) {
             try {
-                System.out.println("Available operations: 1.INFO 2.DEPOSIT 3.WITHDRAW 4.EXIT");
+                System.out.println("Available operations: 0.LOGIN 1.INFO 2.DEPOSIT 3.WITHDRAW 4.EXIT");
                 System.out.print("Enter operation code: ");
                 return Operation.getAllowableOperationByOrdinal(Integer.valueOf(readString()));
             } catch (IllegalArgumentException e) {

@@ -46,44 +46,49 @@ public class CurrencyManipulator {
     }
 
     public boolean isAmountAvailable(int expectedAmount) {
-        return getTotalAmount() > expectedAmount;
+        return getTotalAmount() >= expectedAmount;
     }
 
     public Map<Integer, Integer> withdrawAmount(int expectedAmount) throws NotEnoughMoneyException {
-        Map<Integer, Integer> withdrawAmount = new TreeMap<>(Collections.reverseOrder());
-        Map<Integer, Map<Integer, Integer>> allResults = new TreeMap<>();
-        int k = 0;
-        int remainder = expectedAmount;
-        List<Integer> descendingDenominations = new ArrayList<>(((TreeMap<Integer, Integer>) denominations).descendingKeySet());
-        while (k < descendingDenominations.size()) {
-            for (int i = k; i < descendingDenominations.size(); i++) {
-                int count = remainder / descendingDenominations.get(i);
-                if (count > 0) {
-                    if (count > denominations.get(descendingDenominations.get(i))) {
-                        count = denominations.get(descendingDenominations.get(i));
-                    }
-                    remainder -= count * descendingDenominations.get(i);
-                    withdrawAmount.put(descendingDenominations.get(i), count);
-                    if (remainder == 0) {
-                        break;
-                    }
-                }
+        int sum = expectedAmount;
+        HashMap<Integer, Integer> copyDenominations = new HashMap<>(denominations);
+
+        ArrayList<Integer> keys = new ArrayList<>(this.denominations.keySet());
+
+        Collections.sort(keys);
+        Collections.reverse(keys);
+
+        TreeMap<Integer, Integer> resultMap = new TreeMap<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2.compareTo(o1);
             }
-            int withdraw = withdrawAmount.entrySet().stream().map(x -> x.getKey() * x.getValue()).reduce(0, (sum, x) -> sum + x);
-            if (withdraw == expectedAmount) {
-                int noteCount = withdrawAmount.values().stream().reduce(0, (sum, x) -> sum +x);
-                if (!allResults.containsKey(noteCount)) {
-                    allResults.put(noteCount, withdrawAmount);
+        });
+
+        for (Integer denomination : keys) {
+            final int key = denomination;
+            int value = copyDenominations.get(key);
+            while (true) {
+                if (sum < key || value == 0) {
+                    copyDenominations.put(key, value);
+                    break;
                 }
-            } else {
-                remainder = expectedAmount;
-                withdrawAmount.clear();
+                sum -= key;
+                value--;
+
+                if (resultMap.containsKey(key))
+                    resultMap.put(key, resultMap.get(key) + 1);
+                else
+                    resultMap.put(key, 1);
             }
-            k++;
         }
-        if (withdrawAmount.size() == 0) {
+
+        if (sum > 0)
             throw new NotEnoughMoneyException();
+        else {
+            this.denominations.clear();
+            this.denominations.putAll(copyDenominations);
         }
-        return withdrawAmount;
+        return resultMap;
     }
 }

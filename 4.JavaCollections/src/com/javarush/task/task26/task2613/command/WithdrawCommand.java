@@ -5,7 +5,6 @@ import com.javarush.task.task26.task2613.CurrencyManipulator;
 import com.javarush.task.task26.task2613.CurrencyManipulatorFactory;
 import com.javarush.task.task26.task2613.exception.InterruptOperationException;
 import com.javarush.task.task26.task2613.exception.NotEnoughMoneyException;
-import sun.net.sdp.SdpSupport;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,38 +12,38 @@ import java.util.TreeMap;
 class WithdrawCommand implements Command {
     @Override
     public void execute() throws InterruptOperationException {
-        int amount = 0;
-        String currency;
-        CurrencyManipulator currencyManipulator = null;
+        ConsoleHelper.writeMessage("Withdrawing...." + System.lineSeparator());
+
+        String currencyCode = ConsoleHelper.askCurrencyCode();
+        CurrencyManipulator manipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(currencyCode);
+
         while (true) {
-            currency = ConsoleHelper.askCurrencyCode();
-            if (CurrencyManipulatorFactory.getAllCurrency().contains(currency.toUpperCase())) {
-                currencyManipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(currency);
-                break;
-            }
-        }
-        boolean exit = false;
-        while (exit) {
-            while (true) {
-                ConsoleHelper.writeMessage("Enter amount: ");
-                try {
-                    amount = Integer.valueOf(ConsoleHelper.readString());
-                    break;
-                } catch (NumberFormatException e) {
-                    ConsoleHelper.writeMessage("Entered amount is invalid" + System.lineSeparator());
-                }
-            }
-            if (currencyManipulator.isAmountAvailable(amount)) {
-                try {
-                    TreeMap<Integer, Integer> withdraw = (TreeMap<Integer, Integer>) currencyManipulator.withdrawAmount(amount);
-                    for (Map.Entry<Integer, Integer> entry : withdraw.entrySet()) {
-                        ConsoleHelper.writeMessage("\t" + entry.getKey() + " - " + entry.getValue() + System.lineSeparator());
+            try {
+                ConsoleHelper.writeMessage("Please specify integer amount for withdrawing: ");
+                String s = ConsoleHelper.readString();
+                if (s == null) {
+                    ConsoleHelper.writeMessage("Please specify valid positive integer amount for withdrawing: ");
+                } else {
+                    try {
+                        int amount = Integer.parseInt(s);
+                        boolean isAmountAvailable = manipulator.isAmountAvailable(amount);
+                        if (isAmountAvailable) {
+                            Map<Integer, Integer> denominations = manipulator.withdrawAmount(amount);
+                            for (Integer item : denominations.keySet()) {
+                                ConsoleHelper.writeMessage("\t" + item + " - " + denominations.get(item));
+                            }
+
+                            ConsoleHelper.writeMessage(String.format("%d %s was withdrawn successfully", amount, currencyCode));
+                            break;
+                        } else {
+                            ConsoleHelper.writeMessage("Not enough money on your account, please try again: ");
+                        }
+                    } catch (NumberFormatException e) {
+                        ConsoleHelper.writeMessage("Please specify valid positive integer amount for withdrawing: ");
                     }
-                    exit = true;
-                    break;
-                } catch (NotEnoughMoneyException e) {
-                    ConsoleHelper.writeMessage("Try another amount" + System.lineSeparator());
                 }
+            } catch (NotEnoughMoneyException e) {
+                ConsoleHelper.writeMessage("Exact amount is not available");
             }
         }
     }

@@ -9,16 +9,15 @@ public class CashMachine {
 
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-
-//        CurrencyManipulator currencyManipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode("rub");
-//        System.out.println(currencyManipulator.withdrawAmount(153).toString());
-        while (true) {
-            try {
-                CommandExecutor.execute(ConsoleHelper.askOperation());
-            } catch (InterruptOperationException e) {
-                ConsoleHelper.writeMessage("GoodBye");
-                return;
-            }
+        try {
+            CommandExecutor.execute(Operation.LOGIN);
+            Operation operation;
+            do {
+                operation = ConsoleHelper.askOperation();
+                CommandExecutor.execute(operation);
+            } while (operation != Operation.EXIT);
+        } catch (InterruptOperationException ignored) {
+            ConsoleHelper.writeMessage("Terminated. Goodbye");
         }
     }
 }
