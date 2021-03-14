@@ -18,7 +18,7 @@ public class Solution {
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        solution.sendMail("boomzin@gmail.com", "Hl999j8C4", "ernest.aidinov@gmail.com");
+//        solution.sendMail("boomzin@gmail.com", "Hl999j8C4", "ernest.aidinov@gmail.com");
     }
 
     public void sendMail(final String username, final String password, final String recipients) {
